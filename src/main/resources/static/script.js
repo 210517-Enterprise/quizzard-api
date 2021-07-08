@@ -20,35 +20,34 @@
 window.onload = () => {
 
     console.log("loading script.js......")
+
     // Dynamically create HTML elements needed for the page
-    let quizDiv = document.createElement('div');    
+    let quizDiv = document.createElement('div');
     let resultsDiv = document.createElement('div');
     let buttonDiv = document.createElement('div');
     let submitBtn = document.createElement('button');
 
-    // We can also create and set attrbiutes to the newly created elements
+    // Set attributes on the newly created elements
     quizDiv.setAttribute('id', 'quiz');
-    resultsDiv.setAttribute('id', 'results')
+    resultsDiv.setAttribute('id', 'results');
     buttonDiv.setAttribute('id', 'button-container');
     buttonDiv.style.padding = '2px';
     buttonDiv.style.cssFloat = 'left';
-
     submitBtn.setAttribute('id', 'submit');
     submitBtn.setAttribute('class', 'btn btn-primary');
 
-    // Add some text to the button
-    submitBtn.innerText = "Submit Quiz"
+    // Add some text to display within the submit button
+    submitBtn.innerText = 'Submit Quiz';
 
-    // append and prepend the newly created elements to the newly craeeted page
+    // Add the newly created elements to the body of the page
     buttonDiv.appendChild(submitBtn);
     document.body.prepend(resultsDiv);
     document.body.prepend(buttonDiv);
     document.body.prepend(quizDiv);
 
-    // Add event listeners for vlaidating and grading the quiz
-    buttonDiv.addEventListener('mouseover', isQuizValid); 
-    submitBtn.addEventListener('click', showResults); 
-
+    // Add event listeners for validating and grading the quiz
+    buttonDiv.addEventListener('mouseover', isQuizValid);
+    submitBtn.addEventListener('click', showResults);
 
     buildQuiz();
 }
@@ -70,33 +69,35 @@ function isQuizValid() {
 }
 
 async function showResults() {
+    
+    let questionPromise = await getQuestions;
+    let questions = await questionPromise();
 
-    let questionsPromise = await getQuestions;
-    let questions = await questionsPromise(); 
- 
-    let resultsContainer= document.getElementById('results');
+    // Convenience reference for our resultsContainer
+    let resultsContainer = document.getElementById('results');
 
-    // Gather selected user answers from the quiz into an array
+    // Gather user selected answers from the quiz into an array
     let selectedAnswers = document.querySelectorAll('div.answers > label > input[name^="question-"]:checked');
 
-    // create a variable to keep track of the number of correct answers
+    // Create a variable to keep track of the number correct
     let numCorrect = 0;
 
-    // For each question in questions, chekc if it's correct
+    // For each question in quizQuestions
     questions.forEach((currentQuestion, questionNumber) => {
 
-        let userAnswerLabel = ((selectedAnswers[questionNumber] || {}).parentElementm || {});
+        let userAnswerLabel = ((selectedAnswers[questionNumber] || {}).parentElement || {});
         let userAnswerUnmod = (selectedAnswers[questionNumber] || {}).value;
-        let userAnswer =  userAnswerUnmod.charAt(userAnswerUnmod.length-1).toLowerCase();
+        let userAnswer = userAnswerUnmod.charAt(userAnswerUnmod.length - 1).toLowerCase();
 
 
-        // style th user selections based on correctness
+        // style user selections based on correctness
         if (userAnswer === currentQuestion.correctAnswer) {
             numCorrect++;
             (userAnswerLabel.style || {}).color = 'darkgreen';
         } else {
             (userAnswerLabel.style || {}).color = 'red';
         }
+
     });
 
     let userScore =  ((numCorrect/questions.length) * 100).toFixed(2);
@@ -128,8 +129,7 @@ async function buildQuiz() {
         const answers = [];
 
         // create a label for each answer within the question and add it to the answers array -> 2 ways: basic loop, JS enhanced for loop (let n in numbers)
-        for(let letter in currentQuestion['questionAnswers']) { // in JS you can access a property of an object with obj['property']
-
+        for (let letter in currentQuestion['questionAnswers']) {
             answers.push(`
             <label>
                 <input type="radio" name="question-${questionNumber}" value="${letter}"/>
@@ -144,18 +144,12 @@ async function buildQuiz() {
         <br/>
         <div class="question">${currentQuestion['questionText']}</div>
         <div class="answers">${answers.join('')}</div>
-        `) // join() transforms an array into a string
+        `); // join() transforms an array into a string
 
 
         // combine our output array into one string of HTM<  and put it on the page
         quizContainer.innerHTML = output.join('');
-
     });
-
-
-
-
-
 }
 
 
@@ -166,7 +160,7 @@ let getQuestions = (async function() {
     let myQuestions; // this qill be an array of JSON object that we retrieve
 
     return async function() {
-        if (!!myQuestions) { // here we're checking to see if myQuestions is defined or not (truthy or falsey)
+        if (myQuestions) { // here we're checking to see if myQuestions is defined or not (truthy or falsey)
             console.log("already retirieved the questions...not doing it again");
             return myQuestions;
         } else {
