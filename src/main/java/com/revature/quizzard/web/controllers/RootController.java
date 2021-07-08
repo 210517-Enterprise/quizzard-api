@@ -16,7 +16,7 @@ public class RootController {
     @GetMapping
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public RedirectView redirectToApiDocumentation() {
-        return new RedirectView("swagger-ui/index.html"); 
+        return new RedirectView("index.html"); 
         
         /*
          * To automatically load up the Swagger documentation:

@@ -17,7 +17,7 @@ public class Question {
     private String questionText;
 
     @Column(name = "correct_answer")
-    private String correctAnswer;
+    private String correctAnswer; // this will be transposed to a JSON property
 
     @Embedded
     private Answers questionAnswers;
