@@ -1,0 +1,47 @@
+server:
+  port: 5000 # ElasticBeanstalk expects for Java apps to be deployed on port 5000
+  error:
+    include-stacktrace: never # prevents stack traces from appearing in any server responses
+
+spring:
+  # Basic application info
+  application:
+    name: quizzard-api
+  # In-memory H2 database configurations
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  # Basic Datasource/JDBC configurations
+  datasource:
+    url: jdbc:h2:mem:quizzard-db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  # Spring Data JPA configurations
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+
+# Spring Boot Actuator configurations
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" # DO NOT EXPOSE ALL ACTUATOR ENDPOINTS IN PRODUCTION
+
+# .properties file version of the above .yml configuration
+#-----------------------------------------------------------
+# spring.application.name=quizzard-api
+# spring.h2.console.enabled=true
+# spring.h2.console.path=/h2
+# spring.datasource.url=jdbc:h2:mem:quizzard-db
+# spring.datasource.driver-class-name=org.h2.Driver
+# spring.datasource.username=sa
+# spring.datasource.password=password
+# spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+# spring.jpa.show-sql=true
+# spring.jpa.hibernate.ddl-auto=create
+# management.endpoints.web.exposure.include=*
